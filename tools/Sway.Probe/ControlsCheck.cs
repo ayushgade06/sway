@@ -18,9 +18,14 @@ static class ControlsCheck
         var sw = Stopwatch.StartNew();
         for (int i = 0; i < 100; i++) v.Apply(i % 2 == 0 ? 0.001f : -0.001f);
         Console.WriteLine($"100 Apply calls: {sw.Elapsed.TotalMilliseconds / 100:F3} ms each");
+        // Slow swipe: many tiny steps (0.3 mm of 74.8 mm ≈ 0.4%) must add up instead of being rounded away.
+        float slowStart = v.Get();
+        for (int i = 0; i < 25; i++) v.Apply(slowStart > 0.5f ? -0.004f : 0.004f);
+        float slowMoved = Math.Abs(v.Get() - slowStart);
+        Console.WriteLine($"Slow swipe: 25 × 0.4% steps moved {slowMoved * 100:F1} points (expected ≈ 10)");
         v.Apply(before - v.Get());
         Console.WriteLine($"Restored to {v.Get() * 100:F0}");
-        return Math.Abs(Math.Abs(after - before) - 0.1f) < 0.011f ? 0 : 1;
+        return Math.Abs(Math.Abs(after - before) - 0.1f) < 0.011f && slowMoved > 0.08f ? 0 : 1;
     }
 
     public static int SetVolume(int percent)

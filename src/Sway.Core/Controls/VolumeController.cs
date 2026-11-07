@@ -15,6 +15,9 @@ public sealed class VolumeController : IDisposable
     readonly DeviceWatcher _watcher;
     readonly VolumeCallback _callback;
     CoreAudio.IAudioEndpointVolume? _volume;
+    // Windows rounds the volume to its own steps, so tiny per-frame changes would be lost if each one started from
+    // the read-back value. Keep a precise target; resync only when the device value moved without us.
+    float _target = -1, _lastRead = -1;
 
     /// <summary>Raised when something other than Sway changes the volume (keyboard keys, mixer…). Any thread.</summary>
     public event Action<float>? Changed;
@@ -33,6 +36,7 @@ public sealed class VolumeController : IDisposable
         lock (_lock)
         {
             Unbind();
+            _target = _lastRead = -1; // new device: start from its own level
             try
             {
                 _enumerator.GetDefaultAudioEndpoint(CoreAudio.EDataFlow.Render, CoreAudio.ERole.Multimedia, out var device);
@@ -86,8 +90,10 @@ public sealed class VolumeController : IDisposable
             {
                 var ctx = OwnContext;
                 _volume.GetMasterVolumeLevelScalar(out var v);
-                float next = Math.Clamp(v + delta, 0f, 1f);
+                if (_target < 0 || Math.Abs(v - _lastRead) > 0.0001f) _target = v; // first use, or keys/mixer changed it
+                float next = _target = Math.Clamp(_target + delta, 0f, 1f);
                 if (next != v) _volume.SetMasterVolumeLevelScalar(next, ref ctx);
+                _volume.GetMasterVolumeLevelScalar(out _lastRead);
                 if (delta > 0)
                 {
                     _volume.GetMute(out var muted);
