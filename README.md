@@ -2,7 +2,7 @@
 
 Sway turns the edges of your laptop's touchpad into sliders. Slide one finger up or down the **right edge** to change the volume, or the **left edge** to change screen brightness. The level follows your finger, like the edge sliders on a phone. The middle of the touchpad works exactly as before.
 
-<img src="docs/demo.png" width="600" alt="A finger sliding up the right edge of a touchpad, with Sway's volume indicator at 94">
+<img src="docs/demo.gif" width="640" alt="A finger slides up the right edge of a touchpad to raise the volume, then up the left edge to raise the brightness">
 
 ## Download
 
