@@ -147,6 +147,37 @@ internal static unsafe partial class Native
     [LibraryImport("hid.dll")]
     public static partial int HidP_SetUsages(int reportType, ushort usagePage, ushort linkCollection, ushort* usages, ref uint usageLength, byte* preparsed, byte* report, uint reportLength);
 
+    // Low-level mouse hook (cursor freeze, E3).
+    public const int WH_MOUSE_LL = 14;
+    public const uint WM_MOUSEMOVE = 0x0200, LLMHF_INJECTED = 0x1;
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MSLLHOOKSTRUCT { public int X, Y; public uint MouseData, Flags, Time; public nuint ExtraInfo; }
+
+    [LibraryImport("user32.dll", EntryPoint = "SetWindowsHookExW", SetLastError = true)]
+    public static partial nint SetWindowsHookEx(int idHook, delegate* unmanaged<int, nint, nint, nint> proc, nint module, uint threadId);
+
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool UnhookWindowsHookEx(nint hook);
+
+    [LibraryImport("user32.dll")]
+    public static partial nint CallNextHookEx(nint hook, int code, nint wParam, nint lParam);
+
+    [LibraryImport("user32.dll")]
+    public static partial short GetAsyncKeyState(int vk);
+
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool GetCursorPos(out POINT p);
+
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool SetCursorPos(int x, int y);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINT { public int X, Y; }
+
     /// <summary>All Raw Input HID devices exposing the Precision Touchpad collection (0x0D/0x05).</summary>
     public static List<nint> FindPrecisionTouchpads()
     {
