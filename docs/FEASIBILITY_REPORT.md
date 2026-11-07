@@ -65,7 +65,7 @@ Feasible in user mode with no driver, based on documented APIs, measured hardwar
 | E1 | **Pass (informal).** The maintainer used the tray app's edge swipes on this laptop: frames arrive, one-finger coordinates are parsed, edge zones trigger volume and brightness. A formal `Sway.Probe live` run (full X span 0 → 123 mm, null-hDevice count) is still UNKNOWN. | Hands-on test of the app build |
 | E2 | **Pass.** Edge swipes worked with Notepad, a browser and full-screen video focused. | Maintainer manual test, 2026-11-07 |
 | E3 | **Pass.** With "keep the cursor still" on, the cursor stays put during an edge swipe and moves normally after lift: PTP-synthesised moves do pass through `WH_MOUSE_LL`. CursorFreezer stays (D-09). | Maintainer manual test, 2026-11-07 |
-| E4 | UNKNOWN: elevated Task Manager focused. | — |
+| E4 | **Pass.** Edge swipes kept working with an elevated Task Manager focused. | Maintainer manual test, 2026-11-07 |
 | E5 (hybrid GPU mode) | **Pass.** 100 × `WmiSetBrightness`: median 5.5 ms, p95 8.7 ms, max 54 ms, 0 failures. The throttle is set to 16 ms. Read-back events (`WmiMonitorBrightnessEvent`) arrive late and echo Sway's own writes; Sway ignores read-backs for 1 s after it writes (otherwise the level snapped back after release, a bug found in hands-on testing). | `Sway.Probe brightness` |
 | E5 (discrete GPU / MUX) | UNKNOWN: switch the MUX to dGPU-only, reboot, run `Sway.Probe brightness`. | — |
 | E6 | UNKNOWN: `Sway.Probe live` prints the scan interval on exit. | — |

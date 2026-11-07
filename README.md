@@ -88,7 +88,6 @@ The release includes **Sway.Probe.exe**, a diagnostic tool:
 Please post `report` output in a **Hardware report** issue, whether Sway works for you or not.
 
 **Known limitations**
-- No gestures while an app running **as administrator** has focus. Windows may block input to normal apps in that case (under investigation).
 - Exclusive full-screen games cover the indicator. The level still changes.
 - Brightness may be unavailable in some discrete-GPU (MUX) display modes. The brightness edge then turns off and the tray icon says so.
 - Adaptive or content-adaptive brightness can override changes you make.

@@ -128,11 +128,11 @@ Hardware note: CI runners have no touchpad. Every input-related test must run fr
 |---|---|---|
 | 0.1–0.5 | ✅ | Repo public at github.com/ayushgade06/sway; CI green on x64 + arm64 |
 | 1.5 | ✅ | `probe caps` / `probe report` match TECHNICAL_RESEARCH §0 exactly; report prints hardware ID only (no instance path, serial or username); exit 2 with "no PTP collection" |
-| 1.6 | ⏸ | Needs a pre-release (tag), which needs maintainer approval; then ≥ 5 community reports |
+| 1.6 | ⏳ | Pre-release v0.1.0-alpha approved and published; collecting ≥ 5 community reports is ongoing |
 | 2.1 | ✅ | Cursor, tap, two-finger scroll and three-finger gestures normal while Sway runs (manual) |
 | 2.2, 2.3 | ✅ / ⏳ | Unit tests (hand-built 30-byte report, hybrid split reports). Live full-span check pending (E1 formal) |
 | 2.4, 2.5 | ⚠ | Live view and recorder built. `tests/data/synthetic/` holds generated stand-ins for the 10 scripted gestures until real recordings replace them |
-| 2.6 | ✅ / ⏳ | E2 pass (Notepad, browser, full-screen video). E4 (elevated window) result to confirm |
+| 2.6 | ✅ | E2 pass (Notepad, browser, full-screen video); E4 pass (elevated Task Manager focused) |
 | 2.7 | ✅ | E3 pass: cursor still during the swipe, normal after |
 | 2.8 | ⏳ | E6: `probe live` prints scan interval on exit; result pending |
 | 3.1–3.6 | ✅ | 43 tests incl. per-transition, mapping, palm, multi-touch, replay suite, zero-allocation check |
@@ -150,6 +150,6 @@ Hardware note: CI runners have no touchpad. Every input-related test must run fr
 | 5.5 | ✅ | `%LOCALAPPDATA%\Sway\log.txt`, 512 KB cap with one rollover; crash handlers log, release the hook, exit |
 | 5.6 | ⚠ | Self-contained single-file zips per arch; per-user install via `Sway.exe --install` / `--uninstall` (no installer toolkit, no new dependency). Install/uninstall verified on this PC: files, Start menu shortcut, Apps entry and Run value all removed, folder gone within ~2 s; settings and log kept unless the user says yes. The x64 zip is 92 MB, above the ~30–40 MB estimate. Clean-VM test pending |
 | 5.7 | ⚠ | Packaged build: idle CPU 0 ms over 20 s, 47 MB private memory, 97 MB working set (shared .NET/WPF images), above the 60 MB working-set budget. Single-file compression turned off (it cost 75 MB of private memory). Recognizer is allocation-free per frame (tested) |
-| 5.8 | ⏸ | Release workflow ready; runs only on a tag push, which needs maintainer approval. Unsigned (D-15) |
+| 5.8 | ✅ | v0.1.0-alpha published by the tag workflow, no manual steps. Unsigned (D-15) |
 | 5.9 | ⏸ | winget manifests prepared in `packaging/winget`, not submitted |
 | 5.10 | ✅ | README (install, SmartScreen + checksums, privacy, input transparency, uninstall), HARDWARE.md. The demo GIF still needs to be recorded on the device |
