@@ -141,15 +141,15 @@ Hardware note: CI runners have no touchpad. Every input-related test must run fr
 | 4.1 | ✅ | +10 verified on device; headphone re-bind pending a manual check |
 | 4.2 | ✅ / ⏳ | Hybrid mode measured (E5). MUX dGPU mode pending. Echo bug fixed |
 | 4.3 | ⚠ | Built before E3 (cheap, safe, self-releasing). Keep or remove depending on E3 |
-| 4.4 | ⏳ | OSD built (no-activate, click-through, topmost, theme-aware, fade); focus-steal check pending |
+| 4.4 | ✅ | Verified by replaying swipes through the packaged app: indicator shows centred at the top, dark theme, speaker/sun icons, fades out; the foreground window never changed (no focus steal) |
 | 4.5 | ✅ | Maintainer used edge swipes for volume and brightness end-to-end |
 | 5.1 | ✅ | Single instance verified (a second launch opens settings in the first and exits 0) |
-| 5.2 | ⏳ | Settings window live-applies and persists; manual check pending |
-| 5.3 | ⏳ | HKCU Run toggle built; sign-out/in check pending |
-| 5.4 | ⏳ | `--simulate-no-ptp` / `--simulate-no-wmi` flags built; tray text check pending |
+| 5.2 | ✅ | Verified through UI Automation: zone width and swipe length changed live, saved to settings.json, kept after restart; Restore defaults works. Found and fixed: checkboxes ignored keyboard/screen-reader toggles |
+| 5.3 | ✅ / ⏳ | Toggle writes and removes the HKCU Run value (verified). An actual sign-out/in is still pending |
+| 5.4 | ✅ | `--simulate-no-ptp` and `--simulate-no-wmi` verified: settings status text and log report the right state |
 | 5.5 | ✅ | `%LOCALAPPDATA%\Sway\log.txt`, 512 KB cap with one rollover; crash handlers log, release the hook, exit |
-| 5.6 | ⚠ | Self-contained single-file zips per arch; per-user install via `Sway.exe --install` / `--uninstall` (no installer toolkit, no new dependency). The x64 zip is 92 MB (Probe has its own runtime copy), above the ~30–40 MB estimate. Clean-VM test pending |
-| 5.7 | ⏳ | Idle CPU ≈ 6 ms/s; recognizer is allocation-free per frame (tested). Working set ≈ 95 MB on a Debug build, over the 60 MB budget. Measure the Release build |
+| 5.6 | ⚠ | Self-contained single-file zips per arch; per-user install via `Sway.exe --install` / `--uninstall` (no installer toolkit, no new dependency). Install/uninstall verified on this PC: files, Start menu shortcut, Apps entry and Run value all removed, folder gone within ~2 s; settings and log kept unless the user says yes. The x64 zip is 92 MB, above the ~30–40 MB estimate. Clean-VM test pending |
+| 5.7 | ⚠ | Packaged build: idle CPU 0 ms over 20 s, 47 MB private memory, 97 MB working set (shared .NET/WPF images), above the 60 MB working-set budget. Single-file compression turned off (it cost 75 MB of private memory). Recognizer is allocation-free per frame (tested) |
 | 5.8 | ⏸ | Release workflow ready; runs only on a tag push, which needs maintainer approval. Unsigned (D-15) |
 | 5.9 | ⏸ | winget manifests prepared in `packaging/winget`, not submitted |
 | 5.10 | ✅ | README (install, SmartScreen + checksums, privacy, input transparency, uninstall), HARDWARE.md. The demo GIF still needs to be recorded on the device |

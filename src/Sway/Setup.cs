@@ -69,7 +69,9 @@ static class Setup
         if (Directory.Exists(InstallDir) && Path.GetDirectoryName(Exe)!.Equals(InstallDir, StringComparison.OrdinalIgnoreCase))
         {
             Process.Start(new ProcessStartInfo("powershell.exe",
-                $"-NoProfile -NonInteractive -WindowStyle Hidden -Command \"Wait-Process -Id {Environment.ProcessId} -ErrorAction SilentlyContinue; Remove-Item -LiteralPath '{InstallDir}' -Recurse -Force\"")
+                // Waits for every Sway process running from the folder (the uninstaller and the tray copy it asked to quit), then retries.
+                $"-NoProfile -NonInteractive -WindowStyle Hidden -Command \"Get-Process Sway -ErrorAction SilentlyContinue | Where-Object Path -like '{InstallDir}\\*' | Wait-Process -Timeout 15 -ErrorAction SilentlyContinue; " +
+                $"foreach ($i in 1..10) {{ Remove-Item -LiteralPath '{InstallDir}' -Recurse -Force -ErrorAction SilentlyContinue; if (-not (Test-Path -LiteralPath '{InstallDir}')) {{ break }}; Start-Sleep -Milliseconds 500 }}\"")
             { CreateNoWindow = true, UseShellExecute = false });
         }
     }
