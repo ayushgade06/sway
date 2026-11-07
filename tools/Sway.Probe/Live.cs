@@ -237,3 +237,22 @@ static class GesturesView
             });
     }
 }
+
+static class Rate
+{
+    /// <summary>E6 without a console UI: collect frames for a fixed time, then print rate and scan-interval jitter.</summary>
+    public static int Run(int seconds)
+    {
+        if (!RawInputTouchSource.IsSupported) { Console.Error.WriteLine("no PTP collection"); return 2; }
+        using var t = new Tracker();
+        Console.WriteLine($"Measuring for {seconds} s: swipe one finger around the touchpad, include a long swipe and a 2 s still hold.");
+        int peak = 0;
+        for (int i = 0; i < seconds * 10; i++) { Thread.Sleep(100); peak = Math.Max(peak, t.Snapshot().Hz); }
+        var (n, mean, std, p95) = t.ScanStats();
+        Console.WriteLine($"Frames {t.Frames}, WM_INPUT {t.Source.Messages}, null hDevice {t.Source.NullDeviceMessages}, dropped {t.Source.Dropped}");
+        Console.WriteLine($"Peak frames per second (arrival): {peak}");
+        if (t.MinX <= t.MaxX) Console.WriteLine($"X range touched: {t.MinX:F1} → {t.MaxX:F1} mm (pad {t.WidthMm:F1} mm)");
+        Console.WriteLine(n > 0 ? $"Scan interval: mean {mean:F2} ms ({1000 / mean:F0} Hz), σ {std:F2} ms, p95 {p95:F2} ms over {n} frames" : "No touch frames received.");
+        return n > 0 ? 0 : 1;
+    }
+}

@@ -16,6 +16,10 @@ sealed class Program
     readonly OsdWindow _osd = new();
     readonly Forms.NotifyIcon _tray;
     readonly Forms.ToolStripMenuItem _enabledItem;
+    readonly Forms.ToolStripMenuItem _sensitivityItem = new("Swipe sensitivity");
+
+    /// <summary>Tray presets: swipe length for 0→100 as % of pad height (fine-tune in Settings).</summary>
+    static readonly (string Name, float Travel)[] Presets = [("High — full pad height = 0→100", 100), ("Medium — 2× pad height", 200), ("Low — 3× pad height", 300)];
     SettingsWindow? _settingsWindow;
 
     // Latest level from the input thread, drawn at most once per dispatcher pass.
@@ -75,6 +79,9 @@ sealed class Program
         _enabledItem = new Forms.ToolStripMenuItem("Enabled", null, (_, _) => Apply(_engine.Settings with { Enabled = !_engine.Settings.Enabled }));
         var menu = new Forms.ContextMenuStrip();
         menu.Items.Add(_enabledItem);
+        foreach (var (name, travel) in Presets)
+            _sensitivityItem.DropDownItems.Add(name, null, (_, _) => Apply(_engine.Settings with { VolumeTravelPercent = travel, BrightnessTravelPercent = travel }));
+        menu.Items.Add(_sensitivityItem);
         menu.Items.Add("Settings…", null, (_, _) => OpenSettings());
         menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add("Quit", null, (_, _) => _app.Shutdown());
@@ -154,6 +161,8 @@ sealed class Program
         var s = _engine.Settings;
         _enabledItem.Checked = s.Enabled;
         _enabledItem.Enabled = _engine.TouchpadSupported;
+        for (int i = 0; i < Presets.Length; i++)
+            ((Forms.ToolStripMenuItem)_sensitivityItem.DropDownItems[i]).Checked = s.VolumeTravelPercent == Presets[i].Travel && s.BrightnessTravelPercent == Presets[i].Travel;
         string text = !_engine.TouchpadSupported ? "Sway: no Precision Touchpad"
             : !s.Enabled ? "Sway: disabled"
             : !_engine.BrightnessSupported ? "Sway: volume only (no brightness)"

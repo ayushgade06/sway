@@ -16,6 +16,7 @@ static class Program
           record <file> [desc] Record touch frames to JSON until Enter (for tests/data)
           freeze               E3: hold Ctrl to block touchpad cursor moves via a low-level mouse hook
           gestures             Live edge-gesture recognizer output (P3.7)
+          rate [seconds]       Measure frame rate and jitter while you swipe (E6), no UI
           volume [percent]     Check volume control: +10 and back (P4.1), or set it
           brightness           Time 100 WMI brightness writes and restore (E5)
           run                  Full pipeline without UI: edge swipes change volume/brightness (P4.5)
@@ -33,6 +34,7 @@ static class Program
                 "record" when args.Length > 1 => Live.Record(args[1], args.Length > 2 ? string.Join(" ", args[2..]) : Path.GetFileNameWithoutExtension(args[1])),
                 "freeze" => Live.Freeze(),
                 "gestures" => GesturesView.Run(),
+                "rate" => Rate.Run(args.Length > 1 && int.TryParse(args[1], out var sec) ? sec : 20),
                 "volume" when args.Length > 1 && int.TryParse(args[1], out var pct) => ControlsCheck.SetVolume(pct),
                 "volume" => ControlsCheck.Volume(),
                 "brightness" => ControlsCheck.Brightness(),
