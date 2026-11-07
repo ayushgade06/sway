@@ -1,5 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <InternalsVisibleTo Include="Sway.Core.Tests" />
+    <InternalsVisibleTo Include="Sway.Probe" />
+    <InternalsVisibleTo Include="Sway" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="10.0.14" />
   </ItemGroup>
 </Project>
