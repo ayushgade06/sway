@@ -117,3 +117,39 @@ Hardware note: CI runners have no touchpad. Every input-related test must run fr
 | P5 | 4–5 days |
 | P0 + OSS release work (5.8–5.10) | 3–4 days |
 | **Total** | **~4–5 engineer-weeks** to a signed, installable v1 for PTP laptops. Medium complexity. The hard parts are P2/P3 tuning across *other people's* hardware and getting signing/reputation, not code volume. |
+
+---
+
+## Acceptance status (2026-11-07)
+
+✅ done · ⏳ needs a hands-on check by a maintainer · ⏸ needs a maintainer decision · ⚠ done with a deviation
+
+| Task | Status | Notes |
+|---|---|---|
+| 0.1–0.5 | ✅ | Repo public at github.com/ayushgade06/sway; CI green on x64 + arm64 |
+| 1.5 | ✅ | `probe caps` / `probe report` match TECHNICAL_RESEARCH §0 exactly; report prints hardware ID only (no instance path, serial or username); exit 2 with "no PTP collection" |
+| 1.6 | ⏸ | Needs a pre-release (tag), which needs maintainer approval; then ≥ 5 community reports |
+| 2.1 | ⏳ | Built; frames arrive (the app works). Manual check that cursor, taps and scroll stay normal is pending |
+| 2.2, 2.3 | ✅ / ⏳ | Unit tests (hand-built 30-byte report, hybrid split reports). Live full-span check pending (E1 formal) |
+| 2.4, 2.5 | ⚠ | Live view and recorder built. `tests/data/synthetic/` holds generated stand-ins for the 10 scripted gestures until real recordings replace them |
+| 2.6 | ⏳ | E2/E4 pending |
+| 2.7 | ⏳ | E3 tool built; result pending |
+| 2.8 | ⏳ | E6: `probe live` prints scan interval on exit; result pending |
+| 3.1–3.6 | ✅ | 43 tests incl. per-transition, mapping, palm, multi-touch, replay suite, zero-allocation check |
+| 3.4 | ⚠ | Sensitivity is now "% of pad height" (default 100 % = full height is full range), changed at the maintainer's request after hands-on testing. The optional acceleration curve was not built (YAGNI; not in the settings table) |
+| 3.7 | ⏳ | `probe gestures` built; 20/20 and 2-minute mousing check pending |
+| 4.1 | ✅ | +10 verified on device; headphone re-bind pending a manual check |
+| 4.2 | ✅ / ⏳ | Hybrid mode measured (E5). MUX dGPU mode pending. Echo bug fixed |
+| 4.3 | ⚠ | Built before E3 (cheap, safe, self-releasing). Keep or remove depending on E3 |
+| 4.4 | ⏳ | OSD built (no-activate, click-through, topmost, theme-aware, fade); focus-steal check pending |
+| 4.5 | ✅ | Maintainer used edge swipes for volume and brightness end-to-end |
+| 5.1 | ✅ | Single instance verified (a second launch opens settings in the first and exits 0) |
+| 5.2 | ⏳ | Settings window live-applies and persists; manual check pending |
+| 5.3 | ⏳ | HKCU Run toggle built; sign-out/in check pending |
+| 5.4 | ⏳ | `--simulate-no-ptp` / `--simulate-no-wmi` flags built; tray text check pending |
+| 5.5 | ✅ | `%LOCALAPPDATA%\Sway\log.txt`, 512 KB cap with one rollover; crash handlers log, release the hook, exit |
+| 5.6 | ⚠ | Self-contained single-file zips per arch; per-user install via `Sway.exe --install` / `--uninstall` (no installer toolkit, no new dependency). The x64 zip is 92 MB (Probe has its own runtime copy), above the ~30–40 MB estimate. Clean-VM test pending |
+| 5.7 | ⏳ | Idle CPU ≈ 6 ms/s; recognizer is allocation-free per frame (tested). Working set ≈ 95 MB on a Debug build, over the 60 MB budget. Measure the Release build |
+| 5.8 | ⏸ | Release workflow ready; runs only on a tag push, which needs maintainer approval. Unsigned (D-15) |
+| 5.9 | ⏸ | winget manifests prepared in `packaging/winget`, not submitted |
+| 5.10 | ✅ | README (install, SmartScreen + checksums, privacy, input transparency, uninstall), HARDWARE.md. The demo GIF still needs to be recorded on the device |
