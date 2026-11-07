@@ -2,7 +2,7 @@
 # Usage: ./eng/publish.ps1 -Arch x64|arm64 [-Version 0.1.0]
 param(
     [Parameter(Mandatory)][ValidateSet('x64', 'arm64')][string]$Arch,
-    [string]$Version = '0.1.0'
+    [string]$Version = '0.1.1'
 )
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot
