@@ -1,117 +1,87 @@
 # Sway
 
-**Edge-swipe volume and brightness for Windows 11 Precision Touchpads.**
+Sway turns the edges of your laptop's touchpad into sliders. Slide one finger up or down the **right edge** to change the volume, or the **left edge** to change screen brightness. The level follows your finger, like the edge sliders on a phone. The middle of the touchpad works exactly as before.
 
-Slide one finger up or down along the **right edge** of your touchpad to change the volume, or along the **left edge** to change screen brightness. It works like the edge sliders on a phone: the level follows your finger, and a swipe over the full height of the touchpad covers the full range. The middle of the touchpad works exactly as before.
+<img src="docs/demo.png" width="600" alt="A finger sliding up the right edge of a touchpad, with Sway's volume indicator at 94">
 
-```
-┌────────┬──────────────────────────────┬────────┐
-│   ☀    │                              │   🔊   │
-│ BRIGHT │      normal touchpad         │ VOLUME │
-│  ↕     │                              │   ↕    │
-└────────┴──────────────────────────────┴────────┘
-```
+## Download
 
-- No admin rights, no driver, nothing installed system-wide.
-- **No network connections and no telemetry. Ever.** ([why that matters](#privacy))
-- Free and open source (MIT).
+Grab the latest version from the [Releases page](https://github.com/ayushgade06/sway/releases). There are two builds, one for each kind of laptop:
 
-> **Status: pre-alpha (0.1).** It works on the maintainer's laptop. Hardware reports from other touchpads are very welcome; see [docs/HARDWARE.md](docs/HARDWARE.md).
+| File | Size | Use it if |
+|---|---|---|
+| `Sway-<version>-win-x64.zip` | 99 MB | Your laptop has an Intel or AMD processor (most laptops). |
+| `Sway-<version>-win-arm64.zip` | 93 MB | Your laptop has a Snapdragon processor. |
 
-## Requirements
+Extract the zip anywhere and double-click **Sway.exe**. Nothing else to install, and no admin rights needed. Sway appears in the system tray.
 
-- Windows 11 (Windows 10 may work but isn't tested)
-- A **Windows Precision Touchpad**. Almost every laptop from 2018 onwards has one. To check: **Settings → Bluetooth & devices → Touchpad**. If you see "Your PC has a precision touchpad", you're set.
-- Brightness control works for the **built-in screen** only, not external monitors.
-
-## Install
-
-**Easiest, with no SmartScreen warning:** (available once [the winget submission](https://github.com/microsoft/winget-pkgs/pull/474069) is approved)
+Sway isn't code signed yet, so Windows may show "Windows protected your PC" the first time. Click **More info**, then **Run anyway**. To check that your download is exactly what the build server produced, compare its checksum with the `.sha256` file published next to it:
 
 ```powershell
-winget install SwayContributors.Sway
-sway          # starts Sway in the tray
+Get-FileHash .\Sway-<version>-win-x64.zip -Algorithm SHA256
 ```
 
-**Or download the zip:**
+You'll need Windows 11 (Windows 10 may work but isn't tested) and a **Precision Touchpad**, which almost every laptop from 2018 onwards has. To check, open **Settings → Bluetooth & devices → Touchpad**. If it says "Your PC has a precision touchpad", you're set.
 
-1. Download `Sway-<version>-win-x64.zip` (or `win-arm64` for Snapdragon laptops) from [Releases](https://github.com/ayushgade06/sway/releases).
-2. Extract it anywhere and double-click **Sway.exe**. Sway appears in the system tray (you may need to click the **^** arrow to see it).
-3. Optional: to install it properly (Start menu entry, listed in **Settings → Apps** for uninstalling), open a terminal in the extracted folder and run:
-   ```powershell
-   .\Sway.exe --install
-   ```
-   This copies Sway to `%LOCALAPPDATA%\Programs\Sway` for your user only. It needs no admin rights.
+To install Sway properly (a Start menu entry, and listed in **Settings → Apps** so you can uninstall it), open a terminal in the extracted folder and run `.\Sway.exe --install`. This copies Sway to `%LOCALAPPDATA%\Programs\Sway` for your user only.
 
-### "Windows protected your PC"
-
-Sway isn't code-signed yet (signing costs money, and we're applying for free open-source signing), so Windows SmartScreen warns about it. Click **More info → Run anyway**. To verify that your download is exactly what our build server produced, compare its checksum with the `.sha256` file published next to it:
-
-```powershell
-Get-FileHash .\Sway-0.1.0-win-x64.zip -Algorithm SHA256
-```
-
-Some antivirus products dislike apps that read raw input and use a mouse hook (see [what Sway does with your input](#what-sway-does-with-your-input)). If yours flags Sway, please open an issue.
-
-## Use it
+## What you get
 
 - **Right edge:** swipe up for louder, down for quieter. Raising the volume also unmutes.
 - **Left edge:** swipe up for brighter, down for dimmer.
-- Start the swipe **inside** the edge strip (about a finger-width). A stroke that starts in the middle and slides to the edge never changes anything, so normal mousing is safe.
-- Taps, two-finger scrolling and three- or four-finger gestures are never affected.
-- A small indicator shows the level at the top of the screen and fades out when you lift your finger.
+- A small indicator at the top of the screen shows the level and fades out when you lift your finger
+- One full-height swipe covers the whole 0 to 100 range
+- Taps, two-finger scrolling and three- or four-finger gestures are never affected
+- A swipe has to *start* inside the edge strip (about a finger wide). A stroke that starts in the middle and slides to the edge changes nothing, so normal mousing is safe.
+- Settings to swap the edges, turn either edge off, change the edge width and swipe length, keep the cursor still during swipes, and start Sway when you sign in. Changes apply immediately.
 
-**Tray menu** (right-click the icon): *Enabled*, *Settings…*, *Quit*. In **Settings** you can swap the edges, turn either edge off, change the edge width, change how long a swipe goes from 0 to 100 (as a percentage of the touchpad height), keep the cursor still during swipes, and start Sway when you sign in. Changes apply immediately.
+Right-click the tray icon for **Enabled**, **Settings…** and **Quit**. On Windows 11, new tray icons start out hidden behind the **^** arrow. Drag Sway onto the taskbar to keep it in view.
+
+## How it works
+
+Sway reads a copy of your touchpad's raw finger positions through Windows' Raw Input API (`src/Sway.Core/Input/RawInputTouchSource.cs`). It can't change or block what the touchpad does. When a finger starts in an edge strip and moves vertically, Sway sets the volume through the Windows Core Audio API, and the brightness through WMI (`WmiMonitorBrightnessMethods`), the same mechanism as Windows' own brightness slider.
+
+If you turn on **Keep the cursor still**, Sway adds a low-level mouse hook (`src/Sway.Core/Input/CursorFreezer.cs`) that drops the cursor movement from the swiping finger, and lets everything through again when you lift. If Sway stops receiving touch frames, the freeze releases itself within 250 ms. If Sway hangs or exits, Windows removes the hook automatically.
 
 ## Privacy
 
 Sway sees every touchpad movement, so trust is the whole product:
 
-- It makes **zero network connections**. There is no update check, no analytics and no crash reporting. A test in CI fails if any Sway assembly references a networking library.
-- Touch data never leaves the process and is never written to disk. The only exception is when **you** run `Sway.Probe record`.
-- Settings live in `%APPDATA%\Sway\settings.json`. A small log (no touch coordinates) lives in `%LOCALAPPDATA%\Sway\log.txt`.
+- It makes **no network connections**. There's no update check, no analytics and no crash reporting. A CI test fails if any Sway assembly references a networking library.
+- Touch data never leaves the process and is never written to disk, unless **you** run `Sway.Probe record`.
+- The only things it stores are your settings in `%APPDATA%\Sway\settings.json` and a small log (no touch coordinates) in `%LOCALAPPDATA%\Sway\log.txt`.
 
-## What Sway does with your input
-
-Antivirus reviewers and curious users can check all of this in the source:
-
-- **Raw Input** (`src/Sway.Core/Input/RawInputTouchSource.cs`): Sway subscribes to a *copy* of the touchpad's reports (HID usage 0x0D/0x05). It can't change or block what the touchpad does.
-- **Low-level mouse hook** (`src/Sway.Core/Input/CursorFreezer.cs`), only when *Keep the cursor still* is on: while an edge swipe is in progress, Sway drops the cursor movement that the same finger produces, then lets everything through again when you lift. If Sway stops receiving touch frames, the freeze releases itself within 250 ms. If Sway hangs or exits, Windows removes the hook automatically.
-- **Volume** through the Windows Core Audio API, and **brightness** through WMI (`WmiMonitorBrightnessMethods`), the same mechanism Windows' own brightness slider uses.
+Some antivirus products dislike apps that read raw input and use a mouse hook. If yours flags Sway, please open an issue.
 
 ## Uninstall
 
 - If you used `--install`: **Settings → Apps → Installed apps → Sway → Uninstall**. Sway asks whether to delete your settings too.
-- If you just ran the zip: choose **Quit** from the tray menu and delete the folder. Settings are in `%APPDATA%\Sway`. If you enabled "start when I sign in", turn it off first in Settings.
+- If you just ran the zip: choose **Quit** from the tray menu and delete the folder. If you turned on "start when I sign in", turn it off in Settings first. Settings are in `%APPDATA%\Sway`.
 
-## Troubleshooting and hardware reports
+## Build it yourself
 
-The release includes **Sway.Probe.exe**, a diagnostic tool:
+You'll need the .NET 10 SDK. The tests don't need a touchpad.
 
 ```powershell
-.\Sway.Probe.exe report     # paste-ready hardware report; contains no personal data
-.\Sway.Probe.exe live       # watch your fingers on a map of the touchpad
-.\Sway.Probe.exe gestures   # see what Sway's recognizer detects
+git clone https://github.com/ayushgade06/sway
+cd sway
+dotnet run --project src/Sway
+dotnet test
 ```
 
-Please post `report` output in a **Hardware report** issue, whether Sway works for you or not.
+To make your own zip:
 
-**Known limitations**
-- Exclusive full-screen games cover the indicator. The level still changes.
-- Brightness may be unavailable in some discrete-GPU (MUX) display modes. The brightness edge then turns off and the tray icon says so.
+```powershell
+./eng/publish.ps1 -Arch x64
+```
+
+[CONTRIBUTING.md](CONTRIBUTING.md) covers how to help, and the design docs are in [docs/](docs).
+
+## Good to know
+
+- Sway is a **pre-alpha**. It's been tested on one laptop so far. Every hardware report helps, whether Sway works for you or not: run `.\Sway.Probe.exe report` (it contains no personal data) and paste the output into a **Hardware report** issue. `Sway.Probe.exe live` shows your fingers on a map of the touchpad, and `gestures` shows what Sway detects. See [docs/HARDWARE.md](docs/HARDWARE.md).
+- Brightness works for the **built-in screen** only, not external monitors. It may also be unavailable in some discrete-GPU (MUX) display modes; the brightness edge then turns off and the tray icon says so.
 - Adaptive or content-adaptive brightness can override changes you make.
+- Exclusive full-screen games cover the indicator. The level still changes.
 
-## Build from source
-
-```powershell
-git clone https://github.com/ayushgade06/sway; cd sway
-dotnet test                              # needs the .NET 10 SDK; no touchpad needed
-dotnet run --project src/Sway            # the tray app
-./eng/publish.ps1 -Arch x64              # self-contained zip in dist/
-```
-
-See [CONTRIBUTING.md](CONTRIBUTING.md). Design docs are in [docs/](docs).
-
-## License
-
-[MIT](LICENSE). Third-party notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+MIT License. Third-party notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
