@@ -60,7 +60,8 @@ sealed class Program
         _app.DispatcherUnhandledException += (_, e) => { e.Handled = true; Crash(e.Exception); };
         TaskScheduler.UnobservedTaskException += (_, e) => Log.Write($"unobserved: {e.Exception}");
 
-        _engine = new Engine(Settings.Load(), args.Contains("--simulate-no-ptp"), args.Contains("--simulate-no-wmi"));
+        var replay = ReplayFromArgs(args);
+        _engine = new Engine(Settings.Load(), args.Contains("--simulate-no-ptp"), args.Contains("--simulate-no-wmi"), replay);
         Log.Write($"touchpad {_engine.TouchpadSupported}, brightness {_engine.BrightnessSupported}, volume {_engine.VolumeAvailable}");
         _engine.LevelChanged += (action, level) =>
         {
@@ -93,6 +94,25 @@ sealed class Program
             _tray.ShowBalloonTip(8000, "Brightness isn't available", "Windows doesn't expose brightness control for this display mode, so the brightness edge is off.", Forms.ToolTipIcon.Info);
 
         WatchSignals();
+        if (replay is not null)
+            new Thread(() => { Thread.Sleep(2000); replay.Run(realTime: true); Log.Write("replay finished"); }) { IsBackground = true }.Start();
+    }
+
+    /// <summary>`--replay a.json b.json …`: feed recorded swipes through the real app instead of the touchpad (testing without hands).</summary>
+    static Core.Input.ReplayTouchSource? ReplayFromArgs(string[] args)
+    {
+        int i = Array.IndexOf(args, "--replay");
+        if (i < 0) return null;
+        var frames = new List<Core.Input.RecordedFrame>();
+        Core.Input.Recording? first = null;
+        foreach (var file in args.Skip(i + 1).TakeWhile(a => !a.StartsWith("--")))
+        {
+            var rec = Core.Input.Recording.Load(file);
+            first ??= rec;
+            double offset = frames.Count == 0 ? 0 : frames[^1].Ms + 2500; // pause between gestures so the indicator fades
+            frames.AddRange(rec.Frames.Select(f => f with { Ms = f.Ms + offset }));
+        }
+        return first is null ? null : new(first with { Frames = frames });
     }
 
     int Run()

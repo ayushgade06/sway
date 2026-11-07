@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Sway OSD" WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         ResizeMode="NoResize" ShowInTaskbar="False" ShowActivated="False" Topmost="True" Focusable="False"
-        SizeToContent="WidthAndHeight" IsHitTestVisible="False">
-  <Border x:Name="Pill" CornerRadius="24" Padding="18,12" Margin="12" BorderThickness="1">
+        Width="380" Height="84" IsHitTestVisible="False">
+  <Border x:Name="Pill" CornerRadius="24" Padding="18,12" Margin="12" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Top">
 
     <StackPanel Orientation="Horizontal">
       <TextBlock x:Name="Glyph" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="18" Width="22" VerticalAlignment="Center" />

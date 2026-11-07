@@ -36,14 +36,10 @@ public partial class OsdWindow : Window
 
         BeginAnimation(OpacityProperty, null);
         Opacity = 1;
-        if (!IsVisible)
-        {
-            Show();
-            UpdateLayout();
-        }
         var area = SystemParameters.WorkArea;
-        Left = area.Left + (area.Width - ActualWidth) / 2;
-        Top = area.Top + 24;
+        Left = area.Left + (area.Width - Width) / 2;
+        Top = area.Top + 12;
+        if (!IsVisible) Show();
         // Safety net: hide even if the "gesture ended" signal never arrives.
         _hide.Interval = TimeSpan.FromMilliseconds(Math.Max(timeoutMs, 5000));
         _hide.Stop(); _hide.Start();

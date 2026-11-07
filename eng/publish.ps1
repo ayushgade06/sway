@@ -1,4 +1,4 @@
-# Builds self-contained single-file Sway.exe + Sway.Probe.exe for one architecture and zips them.
+﻿# Builds self-contained single-file Sway.exe + Sway.Probe.exe for one architecture and zips them.
 # Usage: ./eng/publish.ps1 -Arch x64|arm64 [-Version 0.1.0]
 param(
     [Parameter(Mandatory)][ValidateSet('x64', 'arm64')][string]$Arch,
@@ -10,7 +10,7 @@ $out = Join-Path $root "dist/win-$Arch"
 Remove-Item $out -Recurse -Force -ErrorAction SilentlyContinue
 
 $common = @('-c', 'Release', '-r', "win-$Arch", '--self-contained', 'true', '-o', $out,
-    '-p:PublishSingleFile=true', '-p:IncludeNativeLibrariesForSelfExtract=true', '-p:EnableCompressionInSingleFile=true',
+    '-p:PublishSingleFile=true', '-p:IncludeNativeLibrariesForSelfExtract=true',
     '-p:DebugType=none', "-p:Version=$Version")
 foreach ($p in 'src/Sway', 'tools/Sway.Probe') {
     dotnet publish (Join-Path $root $p) @common

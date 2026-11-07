@@ -14,6 +14,7 @@ public sealed class Engine : IDisposable
     static readonly long StaleTicks = Stopwatch.Frequency / 4; // 250 ms without frames = finger is gone
 
     readonly RawInputTouchSource? _source;
+    readonly ITouchSource? _replay;
     readonly EdgeGestureRecognizer _recognizer;
     readonly VolumeController? _volume;
     readonly BrightnessController _brightness;
@@ -21,7 +22,7 @@ public sealed class Engine : IDisposable
     long _lastFrame;
     Settings _settings;
 
-    public bool TouchpadSupported => _source is not null;
+    public bool TouchpadSupported => _source is not null || _replay is not null;
     public bool BrightnessSupported => _brightness.IsSupported;
     public bool VolumeAvailable => _volume?.IsAvailable == true;
 
@@ -30,12 +31,14 @@ public sealed class Engine : IDisposable
     /// <summary>The finger lifted (or the gesture was cancelled). Input thread.</summary>
     public event Action<ZoneAction>? GestureEnded;
 
-    public Engine(Settings settings, bool simulateNoTouchpad = false, bool simulateNoBrightness = false)
+    /// <param name="replay">Feeds recorded frames instead of the touchpad (testing the app without touching it).</param>
+    public Engine(Settings settings, bool simulateNoTouchpad = false, bool simulateNoBrightness = false, ITouchSource? replay = null)
     {
         _settings = settings;
         _brightness = new BrightnessController(simulateNoBrightness);
         try { _volume = new VolumeController(); } catch (System.Runtime.InteropServices.COMException) { }
         _recognizer = new EdgeGestureRecognizer(Effective(settings));
+        if (replay is not null) { _replay = replay; replay.Frame += OnFrame; return; }
         if (simulateNoTouchpad || !RawInputTouchSource.IsSupported) return;
         _source = new RawInputTouchSource();
         _source.Post(_freezer.Install);

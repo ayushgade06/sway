@@ -41,9 +41,22 @@ public sealed class ReplayTouchSource(Recording recording) : ITouchSource
 {
     public event Action<TouchFrame>? Frame;
 
-    public void Run()
+    /// <summary>Raises every frame. <paramref name="realTime"/> waits between frames as recorded, and stamps frames with the current time.</summary>
+    public void Run(bool realTime = false)
     {
-        foreach (var f in recording.Frames) Frame?.Invoke(f.ToFrame(recording.WidthMm, recording.HeightMm));
+        var clock = Stopwatch.StartNew();
+        long start = Stopwatch.GetTimestamp();
+        foreach (var f in recording.Frames)
+        {
+            var frame = f.ToFrame(recording.WidthMm, recording.HeightMm);
+            if (realTime)
+            {
+                int wait = (int)(f.Ms - clock.Elapsed.TotalMilliseconds);
+                if (wait > 0) Thread.Sleep(wait);
+                frame = frame with { TimestampTicks = start + frame.TimestampTicks };
+            }
+            Frame?.Invoke(frame);
+        }
     }
 
     public void Dispose() { }

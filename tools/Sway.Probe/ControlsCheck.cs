@@ -23,6 +23,14 @@ static class ControlsCheck
         return Math.Abs(Math.Abs(after - before) - 0.1f) < 0.011f ? 0 : 1;
     }
 
+    public static int SetVolume(int percent)
+    {
+        using var v = new VolumeController();
+        v.Apply(percent / 100f - v.Get());
+        Console.WriteLine($"Volume {v.Get() * 100:F0}");
+        return 0;
+    }
+
     /// <summary>E5: time 100 WmiSetBrightness calls and restore the original level.</summary>
     public static int Brightness()
     {
