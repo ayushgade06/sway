@@ -10,6 +10,9 @@ namespace Sway.Core.Input;
 /// </summary>
 public sealed record Recording(string Device, string Description, float WidthMm, float HeightMm, List<RecordedFrame> Frames)
 {
+    /// <summary>Expected recognizer summary for the replay suite, e.g. "right:+-" or "" for no gesture. Null = not checked.</summary>
+    public string? Expect { get; init; }
+
     static readonly JsonSerializerOptions Json = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, WriteIndented = false };
 
     public static Recording Load(string path) =>
