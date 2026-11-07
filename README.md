@@ -26,6 +26,15 @@ Slide one finger up or down along the **right edge** of your touchpad to change 
 
 ## Install
 
+**Easiest, with no SmartScreen warning:** (available once [the winget submission](https://github.com/microsoft/winget-pkgs/pull/474069) is approved)
+
+```powershell
+winget install SwayContributors.Sway
+sway          # starts Sway in the tray
+```
+
+**Or download the zip:**
+
 1. Download `Sway-<version>-win-x64.zip` (or `win-arm64` for Snapdragon laptops) from [Releases](https://github.com/ayushgade06/sway/releases).
 2. Extract it anywhere and double-click **Sway.exe**. Sway appears in the system tray (you may need to click the **^** arrow to see it).
 3. Optional: to install it properly (Start menu entry, listed in **Settings → Apps** for uninstalling), open a terminal in the extracted folder and run:
