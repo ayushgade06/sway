@@ -154,7 +154,9 @@ static class Live
         {
             if (frames.Count == 0) { Console.Error.WriteLine("No frames captured; nothing saved."); return 1; }
             var hwid = Native.GetDeviceName(Native.FindPrecisionTouchpads()[0])?.Split('#') is [_, var id, ..] ? id.Split("&Col", StringSplitOptions.None)[0] : "unknown";
-            new Recording(hwid, description, w, h, frames).Save(path);
+            Console.Write("Expected result for the replay suite (e.g. right:+  left:-  right:+-  ; blank = no gesture): ");
+            string expect = (Console.ReadLine() ?? "").Trim();
+            new Recording(hwid, description, w, h, frames) { Expect = expect }.Save(path);
             Console.WriteLine($"Saved {frames.Count} frames ({frames[^1].Ms / 1000:F1} s) to {path}");
         }
         return 0;
@@ -198,5 +200,40 @@ static class Live
         }
         s_ctrl = Native.GetAsyncKeyState(0x11) < 0;
         return Native.CallNextHookEx(0, code, wParam, lParam);
+    }
+}
+
+static class GesturesView
+{
+    /// <summary>P3.7: live recognizer output.</summary>
+    public static int Run()
+    {
+        var r = new Sway.Core.Gestures.EdgeGestureRecognizer(Sway.Core.Settings.Load());
+        var log = new Queue<string>();
+        int started = 0;
+        float sum = 0;
+        return Live.Run(
+            setup: t => t.Frame += f =>
+            {
+                foreach (var e in r.Process(f))
+                {
+                    lock (log)
+                    {
+                        if (e.Kind == Sway.Core.Gestures.GestureKind.Started) { started++; sum = 0; }
+                        if (e.Kind == Sway.Core.Gestures.GestureKind.LevelDelta) { sum += e.Delta; continue; }
+                        log.Enqueue($"{e.Kind,-10} {e.Zone,-5} {(e.Kind == Sway.Core.Gestures.GestureKind.Ended ? $"net {sum:+0.00;-0.00}" : "")}");
+                        while (log.Count > 6) log.Dequeue();
+                    }
+                }
+            },
+            extra: _ =>
+            {
+                lock (log) return $"""
+
+                    P3.7: 20 deliberate edge swipes should each log Started…Ended. 2 min of normal mousing should start none.
+                    state {r.State,-9}  gestures started {started,4}  current net {sum:+0.00;-0.00}
+                    {string.Join("\n", log.Reverse())}
+                    """;
+            });
     }
 }

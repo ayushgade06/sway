@@ -15,6 +15,7 @@ static class Program
           live                 Live contact view and pad map; prints frame rate on exit (E1, E2, E4, E6)
           record <file> [desc] Record touch frames to JSON until Enter (for tests/data)
           freeze               E3: hold Ctrl to block touchpad cursor moves via a low-level mouse hook
+          gestures             Live edge-gesture recognizer output (P3.7)
         """;
 
     static int Main(string[] args)
@@ -28,6 +29,7 @@ static class Program
                 "live" => Live.Run(),
                 "record" when args.Length > 1 => Live.Record(args[1], args.Length > 2 ? string.Join(" ", args[2..]) : Path.GetFileNameWithoutExtension(args[1])),
                 "freeze" => Live.Freeze(),
+                "gestures" => GesturesView.Run(),
                 _ => Help(),
             };
         }
