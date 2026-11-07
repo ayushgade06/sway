@@ -1,0 +1,5 @@
+{"device":"SYNTHETIC","description":"Synthetic: tap-in-edge-zone. Replace with a real recording.","widthMm":123,"heightMm":74.8,"frames":[
+{"t":0,"c":[[0,1,1,117.94,40.24]]},
+{"t":8,"c":[[0,1,1,118.5,40.5]]},
+{"t":16,"c":[[0,0,1,118.5,40.5]]}
+],"expect":""}

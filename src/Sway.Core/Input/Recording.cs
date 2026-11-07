@@ -13,7 +13,7 @@ public sealed record Recording(string Device, string Description, float WidthMm,
     /// <summary>Expected recognizer summary for the replay suite, e.g. "right:+-" or "" for no gesture. Null = not checked.</summary>
     public string? Expect { get; init; }
 
-    static readonly JsonSerializerOptions Json = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, WriteIndented = false };
+    static readonly JsonSerializerOptions Json = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
     public static Recording Load(string path) =>
         JsonSerializer.Deserialize<Recording>(File.ReadAllText(path), Json) ?? throw new InvalidDataException($"{path}: empty recording");
