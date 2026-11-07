@@ -20,7 +20,8 @@ public partial class SettingsWindow : Window
         RightAction.ItemsSource = actions;
         Load(current);
 
-        foreach (var c in new Control[] { Enabled, Freeze, Startup }) ((CheckBox)c).Click += (_, _) => Changed();
+        // Checked/Unchecked (not Click) so keyboard, screen readers and UI Automation toggles apply too.
+        foreach (var c in new[] { Enabled, Freeze, Startup }) { c.Checked += (_, _) => Changed(); c.Unchecked += (_, _) => Changed(); }
         foreach (var s in new[] { ZoneWidth, Activation, VolumeMm, BrightnessMm, OsdTimeout }) s.ValueChanged += (_, _) => Changed();
         LeftAction.SelectionChanged += (_, _) => Changed();
         RightAction.SelectionChanged += (_, _) => Changed();
