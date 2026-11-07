@@ -1,0 +1,6 @@
+# Prepared for winget-pkgs; NOT submitted. Fill InstallerSha256 from the release's .sha256 files first.
+PackageIdentifier: SwayContributors.Sway
+PackageVersion: 0.1.0
+DefaultLocale: en-US
+ManifestType: version
+ManifestVersion: 1.9.0
