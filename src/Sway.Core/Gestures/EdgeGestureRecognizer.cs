@@ -36,6 +36,9 @@ public sealed class EdgeGestureRecognizer(Settings settings)
     public GestureState State { get; private set; }
     public Zone Zone { get; private set; }
 
+    /// <summary>Forgets any touch in progress (the source stopped delivering frames).</summary>
+    public void Reset() => (State, Zone) = (GestureState.Idle, Zone.None);
+
     /// <summary>Processes one frame. The returned list is reused by the next call; iterate it with an index.</summary>
     public List<GestureEvent> Process(TouchFrame frame)
     {

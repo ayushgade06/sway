@@ -45,3 +45,18 @@ static class ControlsCheck
         return failures == 0 ? 0 : 1;
     }
 }
+
+static class Headless
+{
+    /// <summary>P4.5: the full pipeline without UI. Prints levels as gestures change them.</summary>
+    public static int Run()
+    {
+        using var engine = new Sway.Core.Engine(Sway.Core.Settings.Load());
+        if (!engine.TouchpadSupported) { Console.Error.WriteLine("no PTP collection"); return 2; }
+        Console.WriteLine($"Running. Brightness {(engine.BrightnessSupported ? "ok" : "UNSUPPORTED")}, volume {(engine.VolumeAvailable ? "ok" : "no device")}. Swipe the edges; Enter to quit.");
+        engine.LevelChanged += (a, l) => Console.Write($"\r{a,-10} {l * 100,5:F1}%   ");
+        engine.GestureEnded += a => Console.WriteLine($"\r{a,-10} done at {engine.Level(a) * 100:F0}%   ");
+        Console.ReadLine();
+        return 0;
+    }
+}

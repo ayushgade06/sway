@@ -18,6 +18,7 @@ static class Program
           gestures             Live edge-gesture recognizer output (P3.7)
           volume               Check volume control: +10 and back (P4.1)
           brightness           Time 100 WMI brightness writes and restore (E5)
+          run                  Full pipeline without UI: edge swipes change volume/brightness (P4.5)
         """;
 
     static int Main(string[] args)
@@ -34,6 +35,7 @@ static class Program
                 "gestures" => GesturesView.Run(),
                 "volume" => ControlsCheck.Volume(),
                 "brightness" => ControlsCheck.Brightness(),
+                "run" => Headless.Run(),
                 _ => Help(),
             };
         }
