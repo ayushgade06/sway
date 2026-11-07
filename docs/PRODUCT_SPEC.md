@@ -43,7 +43,7 @@ Rules:
 
 1. **The touch must start inside the zone** (see DECISIONS D-07). Sliding into a zone from the centre never triggers a gesture.
 2. Once a gesture is Active, it stays bound to its control until the finger lifts, even if the finger drifts out of the zone.
-3. Mapping is relative and proportional: `Δlevel = −ΔY_mm × sensitivity`. Default sensitivity is full range over 60 mm of travel, which is about 80% of the pad height. An optional acceleration curve is available.
+3. Mapping is relative and proportional: `Δlevel = −ΔY_mm / (padHeight_mm × travel%)`. Default travel is 100%: a swipe over the full touchpad height covers the full range, on any pad size (changed from 60 mm after hands-on testing, 2026-11-07).
 4. Reversing direction during a swipe reverses the change. There is no dead-band, apart from a 0.3 mm jitter filter.
 5. Levels are clamped to 0–100%. No wrap-around.
 
@@ -77,8 +77,8 @@ The Windows touchpad driver keeps moving the cursor whatever Sway does. Sway can
 | `rightZone.action` | `volume` | same |
 | `zoneWidthPercent` | 12 | 5–25 |
 | `activationDistanceMm` | 4 | 2–10 |
-| `volumeSensitivity` | 100% per 60 mm | 20–300 mm per full range |
-| `brightnessSensitivity` | 100% per 60 mm | same |
+| `volumeTravelPercent` | 100 (full pad height = full range) | 25–300 % of pad height |
+| `brightnessTravelPercent` | 100 | same |
 | `freezeCursorDuringGesture` | true | — |
 | `osdTimeoutMs` | 1200 | 300–5000 |
 | `launchAtStartup` | false | — |

@@ -30,7 +30,7 @@ public sealed class EdgeGestureRecognizer(Settings settings)
 
     readonly List<GestureEvent> _events = new(4);
     int _id;
-    float _startX, _startY, _lastY;
+    float _startX, _startY, _lastY, _heightMm;
 
     public Settings Settings { get; set; } = settings;
     public GestureState State { get; private set; }
@@ -43,6 +43,7 @@ public sealed class EdgeGestureRecognizer(Settings settings)
     public List<GestureEvent> Process(TouchFrame frame)
     {
         _events.Clear();
+        _heightMm = frame.HeightMm;
         int touching = 0;
         Contact c = default;
         for (int i = 0; i < frame.Contacts.Count; i++)
@@ -94,7 +95,8 @@ public sealed class EdgeGestureRecognizer(Settings settings)
         float dy = y - _lastY;
         if (Math.Abs(dy) < JitterMm) return; // accumulates: slow movement still registers once it passes the filter
         _lastY = y;
-        float mmPerRange = Action(Zone) == ZoneAction.Volume ? Settings.VolumeSensitivity : Settings.BrightnessSensitivity;
+        float travel = Action(Zone) == ZoneAction.Volume ? Settings.VolumeTravelPercent : Settings.BrightnessTravelPercent;
+        float mmPerRange = _heightMm * travel / 100f; // default: the full pad height is the full range
         _events.Add(new(GestureKind.LevelDelta, Zone, -dy / mmPerRange)); // Y grows downward; up = louder/brighter
     }
 

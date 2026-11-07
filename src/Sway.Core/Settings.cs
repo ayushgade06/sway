@@ -15,10 +15,10 @@ public sealed record Settings
     public ZoneSettings RightZone { get; init; } = new(ZoneAction.Volume);
     public float ZoneWidthPercent { get; init; } = 12;
     public float ActivationDistanceMm { get; init; } = 4;
-    /// <summary>Millimetres of finger travel for a 0→100% change.</summary>
-    public float VolumeSensitivity { get; init; } = 60;
-    /// <summary>Millimetres of finger travel for a 0→100% change.</summary>
-    public float BrightnessSensitivity { get; init; } = 60;
+    /// <summary>Finger travel for a 0→100% change, as % of the touchpad height (100 = the full height).</summary>
+    public float VolumeTravelPercent { get; init; } = 100;
+    /// <summary>Finger travel for a 0→100% change, as % of the touchpad height (100 = the full height).</summary>
+    public float BrightnessTravelPercent { get; init; } = 100;
     public bool FreezeCursorDuringGesture { get; init; } = true;
     public int OsdTimeoutMs { get; init; } = 1200;
     public bool LaunchAtStartup { get; init; }
@@ -40,8 +40,8 @@ public sealed record Settings
         RightZone = RightZone is { } r && Enum.IsDefined(r.Action) ? r : new(ZoneAction.Volume),
         ZoneWidthPercent = Clamp(ZoneWidthPercent, 5, 25, 12),
         ActivationDistanceMm = Clamp(ActivationDistanceMm, 2, 10, 4),
-        VolumeSensitivity = Clamp(VolumeSensitivity, 20, 300, 60),
-        BrightnessSensitivity = Clamp(BrightnessSensitivity, 20, 300, 60),
+        VolumeTravelPercent = Clamp(VolumeTravelPercent, 25, 300, 100),
+        BrightnessTravelPercent = Clamp(BrightnessTravelPercent, 25, 300, 100),
         OsdTimeoutMs = Math.Clamp(OsdTimeoutMs, 300, 5000),
     };
 

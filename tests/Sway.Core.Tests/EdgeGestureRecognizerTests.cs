@@ -76,13 +76,13 @@ public class EdgeGestureRecognizerTests
     [Fact]
     public void ProportionalMapping()
     {
-        // 30 mm up at 60 mm per range ≈ +0.5
+        // Default: the full pad height is the full range, so 30 mm up = 30 / 74.8
         var r = new EdgeGestureRecognizer(new());
         var frames = new List<TouchFrame> { F(Down(118, 60)) };
         for (int i = 1; i <= 60; i++) frames.Add(F(Down(118, 60 - i * 0.5f)));
         frames.Add(F(Up(118, 30)));
         var ev = Run(r, frames);
-        Assert.Equal(0.5f, ev.Where(e => e.Kind == GestureKind.LevelDelta).Sum(e => e.Delta), 3);
+        Assert.Equal(30f / Synth.H, ev.Where(e => e.Kind == GestureKind.LevelDelta).Sum(e => e.Delta), 3);
         Assert.Equal(GestureKind.Ended, ev[^1].Kind);
     }
 
@@ -93,7 +93,7 @@ public class EdgeGestureRecognizerTests
         var ev = Run(r, [F(Down(118, 60)), F(Down(118, 50)), F(Down(100, 40)), F(Down(90, 55)), F(Up(90, 55))]);
         var deltas = ev.Where(e => e.Kind == GestureKind.LevelDelta).Select(e => e.Delta).ToList();
         Assert.True(deltas[0] > 0 && deltas[1] > 0 && deltas[2] < 0);
-        Assert.Equal(0.0833f, deltas.Sum(), 3); // net 5 mm up
+        Assert.Equal(5f / Synth.H, deltas.Sum(), 3); // net 5 mm up
     }
 
     [Fact]
@@ -108,9 +108,9 @@ public class EdgeGestureRecognizerTests
     [Fact]
     public void SensitivityFollowsZoneAction()
     {
-        var r = new EdgeGestureRecognizer(new() { BrightnessSensitivity = 120 });
+        var r = new EdgeGestureRecognizer(new() { BrightnessTravelPercent = 200 });
         var ev = Run(r, [F(Down(5, 60)), F(Down(5, 30))]);
-        Assert.Equal(0.25f, ev.Where(e => e.Kind == GestureKind.LevelDelta).Sum(e => e.Delta), 3);
+        Assert.Equal(30f / (2 * Synth.H), ev.Where(e => e.Kind == GestureKind.LevelDelta).Sum(e => e.Delta), 3);
         Assert.All(ev, e => Assert.Equal(Zone.Left, e.Zone));
     }
 

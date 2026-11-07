@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>Sway.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyTitle>Sway</AssemblyTitle>
+    <Product>Sway</Product>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- WPF and WinForms share type names; only the tray uses WinForms, fully qualified. -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sway.Core\Sway.Core.csproj" />
+    <Resource Include="Sway.ico" />
+  </ItemGroup>
+</Project>

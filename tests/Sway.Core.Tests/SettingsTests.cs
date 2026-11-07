@@ -41,12 +41,12 @@ public class SettingsTests
         var path = Path.GetTempFileName();
         try
         {
-            File.WriteAllText(path, """{ "zoneWidthPercent": 90, "activationDistanceMm": 0, "osdTimeoutMs": 99999, "volumeSensitivity": 1, "rightZone": null }""");
+            File.WriteAllText(path, """{ "zoneWidthPercent": 90, "activationDistanceMm": 0, "osdTimeoutMs": 99999, "volumeTravelPercent": 1, "rightZone": null }""");
             var s = Settings.Load(path);
             Assert.Equal(25, s.ZoneWidthPercent);
             Assert.Equal(2, s.ActivationDistanceMm);
             Assert.Equal(5000, s.OsdTimeoutMs);
-            Assert.Equal(20, s.VolumeSensitivity);
+            Assert.Equal(25, s.VolumeTravelPercent);
             Assert.Equal(ZoneAction.Volume, s.RightZone.Action);
         }
         finally { File.Delete(path); }

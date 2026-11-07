@@ -18,6 +18,7 @@ public sealed class BrightnessController : IDisposable
     volatile bool _disposed;
     float _target;   // 0..1, fractional so sub-1% finger moves accumulate
     int _sent = -1;  // last percent sent to WMI
+    long _lastWriteMs; // Environment.TickCount64 of our last write
 
     /// <summary>Minimum milliseconds between WMI writes (tuned by experiment E5).</summary>
     public int MinIntervalMs { get; init; } = 16; // E5: p95 8.7 ms per write in hybrid-GPU mode
@@ -43,7 +44,8 @@ public sealed class BrightnessController : IDisposable
                 bool external;
                 lock (_lock)
                 {
-                    external = level != _sent;
+                    // Windows reports our own writes back late; an old echo would yank the target backwards mid-swipe.
+                    external = level != _sent && Environment.TickCount64 - _lastWriteMs > 1000;
                     if (external) { _target = level / 100f; _sent = level; }
                 }
                 if (external) Changed?.Invoke(level / 100f);
@@ -77,8 +79,9 @@ public sealed class BrightnessController : IDisposable
                 lock (_lock) want = (int)MathF.Round(_target * 100);
                 if (want == _sent) break;
                 sw.Restart();
+                lock (_lock) _lastWriteMs = Environment.TickCount64; // the echo can arrive before Write returns
                 if (!Write(want)) break;
-                lock (_lock) _sent = want;
+                lock (_lock) { _sent = want; _lastWriteMs = Environment.TickCount64; }
                 int rest = MinIntervalMs - (int)sw.ElapsedMilliseconds;
                 if (rest > 0) Thread.Sleep(rest);
             }
