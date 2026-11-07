@@ -1,0 +1,39 @@
+name: Release
+
+# Runs only when a maintainer pushes a version tag (v1.2.3). Builds, tests, packages both architectures and
+# publishes a GitHub Release with SHA-256 checksums. Builds are unsigned until code signing is set up (D-15).
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - name: Test
+        run: |
+          foreach ($p in 'src/Sway', 'tools/Sway.Probe', 'tests/Sway.Core.Tests') {
+            dotnet build $p -c Release -r win-x64
+            if ($LASTEXITCODE) { exit 1 }
+          }
+          dotnet test tests/Sway.Core.Tests -c Release -r win-x64 --no-build
+          if ($LASTEXITCODE) { exit 1 }
+      - name: Package
+        run: |
+          $version = '${{ github.ref_name }}'.TrimStart('v')
+          ./eng/publish.ps1 -Arch x64 -Version $version
+          ./eng/publish.ps1 -Arch arm64 -Version $version
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = '${{ github.ref_name }}'
+          $pre = if ($tag -match '-') { '--prerelease' } else { '' }
+          gh release create $tag dist/*.zip dist/*.sha256 --title "Sway $tag" --generate-notes $pre

@@ -23,7 +23,7 @@ jobs:
       # A solution can't be built for one RID, so build each entry project.
       - name: Build
         run: |
-          foreach ($p in 'tests/Sway.Core.Tests', 'tools/Sway.Probe') {
+          foreach ($p in 'src/Sway', 'tools/Sway.Probe', 'tests/Sway.Core.Tests') {
             dotnet build $p -c Release -r win-${{ matrix.arch }}
             if ($LASTEXITCODE) { exit 1 }
           }
