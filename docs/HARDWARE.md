@@ -6,7 +6,7 @@ Sway needs a Windows Precision Touchpad (PTP) that exposes the HID touchpad coll
 
 | Laptop | Touchpad | Layout | Size (mm) | Status | Notes |
 |---|---|---|---|---|---|
-| Acer Nitro ANV15-51 (Win 11 build 26300, x64) | PixArt PIXA3848 (VID 0x093A PID 0x3848), I²C-HID, Microsoft inbox driver 10.0.26100.9818 | parallel, 5 contacts | 123.0 × 74.8 | ✅ (maintainer, in testing) | Reference device. Volume control verified. WMI brightness works in hybrid-GPU mode (p95 8.7 ms per write); discrete-GPU (MUX) mode not yet tested. |
+| Acer Nitro ANV15-51 (Win 11 build 26300, x64) | PixArt PIXA3848 (VID 0x093A PID 0x3848), I²C-HID, Microsoft inbox driver 10.0.26100.9818 | parallel, 5 contacts | 123.0 × 74.8 | ✅ | Reference device. 142 Hz, 0 dropped frames. Volume and brightness verified; WMI brightness p95 8.7 ms per write in hybrid-GPU mode; discrete-GPU (MUX) mode not yet tested. |
 
 ## What the columns mean
 

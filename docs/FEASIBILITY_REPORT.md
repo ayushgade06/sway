@@ -68,5 +68,5 @@ Feasible in user mode with no driver, based on documented APIs, measured hardwar
 | E4 | **Pass.** Edge swipes kept working with an elevated Task Manager focused. | Maintainer manual test, 2026-11-07 |
 | E5 (hybrid GPU mode) | **Pass.** 100 × `WmiSetBrightness`: median 5.5 ms, p95 8.7 ms, max 54 ms, 0 failures. The throttle is set to 16 ms. Read-back events (`WmiMonitorBrightnessEvent`) arrive late and echo Sway's own writes; Sway ignores read-backs for 1 s after it writes (otherwise the level snapped back after release, a bug found in hands-on testing). | `Sway.Probe brightness` |
 | E5 (discrete GPU / MUX) | UNKNOWN: switch the MUX to dGPU-only, reboot, run `Sway.Probe brightness`. | — |
-| E6 | UNKNOWN: `Sway.Probe live` prints the scan interval on exit. | — |
+| E6 | **Pass.** 60 s of swiping: 3015 frames, 0 dropped, 0 null hDevice. Scan interval mean 7.02 ms (**142 Hz**), σ 0.37 ms, p95 7.10 ms. Frames keep coming while a finger is held still, so the 250 ms "finger gone" timeout is safe; at about 0.1 mm of travel per frame, the 0.3 mm jitter filter is appropriate. X span touched 6.9 → 123.0 mm (a fingertip centroid doesn't reach the very left edge, which is fine for a 15 mm zone). | `Sway.Probe rate 60`, 2026-11-07 |
 | Volume (P4.1) | **Pass.** `Apply(+0.1)` moved the Windows volume 74 → 84 and back; 0.2 ms per call. | `Sway.Probe volume` |

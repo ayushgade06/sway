@@ -130,11 +130,11 @@ Hardware note: CI runners have no touchpad. Every input-related test must run fr
 | 1.5 | ✅ | `probe caps` / `probe report` match TECHNICAL_RESEARCH §0 exactly; report prints hardware ID only (no instance path, serial or username); exit 2 with "no PTP collection" |
 | 1.6 | ⏳ | Pre-release v0.1.0-alpha approved and published; collecting ≥ 5 community reports is ongoing |
 | 2.1 | ✅ | Cursor, tap, two-finger scroll and three-finger gestures normal while Sway runs (manual) |
-| 2.2, 2.3 | ✅ / ⏳ | Unit tests (hand-built 30-byte report, hybrid split reports). Live full-span check pending (E1 formal) |
+| 2.2, 2.3 | ✅ | Unit tests (hand-built 30-byte report, hybrid split reports). Live: a full swipe reached 123.0 mm on the right; 6.9 mm on the left (fingertip centroid) |
 | 2.4, 2.5 | ⚠ | Live view and recorder built. `tests/data/synthetic/` holds generated stand-ins for the 10 scripted gestures until real recordings replace them |
 | 2.6 | ✅ | E2 pass (Notepad, browser, full-screen video); E4 pass (elevated Task Manager focused) |
 | 2.7 | ✅ | E3 pass: cursor still during the swipe, normal after |
-| 2.8 | ⏳ | E6: `probe live` prints scan interval on exit; result pending |
+| 2.8 | ✅ | E6: 142 Hz, σ 0.37 ms (`probe rate`) |
 | 3.1–3.6 | ✅ | 43 tests incl. per-transition, mapping, palm, multi-touch, replay suite, zero-allocation check |
 | 3.4 | ⚠ | Sensitivity is now "% of pad height" (default 100 % = full height is full range), changed at the maintainer's request after hands-on testing. The optional acceleration curve was not built (YAGNI; not in the settings table) |
 | 3.7 | ✅ | 20 deliberate swipes recognised, no accidental triggers during normal use; slide-in from the centre and taps in the zone don't trigger (manual) |
