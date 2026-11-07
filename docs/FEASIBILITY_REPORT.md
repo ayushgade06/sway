@@ -56,3 +56,17 @@ Sway gets a copy of each frame. The PTP driver gets the original and moves the c
 ### **CONDITIONAL GO**
 
 Feasible in user mode with no driver, based on documented APIs, measured hardware capabilities and three source-verified projects using the same mechanism. The conditions are E1 + E2 passing on the reference device, which is a half-day experiment. E3 decides whether the cursor stays still or drifts during a gesture; it does not decide whether Sway is viable.
+
+## 6. Results (reference device, 2026-11-07)
+
+| ID | Result | Evidence |
+|---|---|---|
+| Layout | **Pass.** `Sway.Probe caps` reads the live descriptor: report ID 1, 30 bytes, 5 slots, parallel; X 0..2905 → 123.0 mm, Y 0..1766 → 74.8 mm; field bit offsets found by HidP_Set* probing (tip @9, conf @8, id @10:4, X @16:16, Y @32:16 per 40-bit slot; contact count @208:8; scan time @224:16). | `Sway.Probe caps` output |
+| E1 | **Pass (informal).** The maintainer used the tray app's edge swipes on this laptop: frames arrive, one-finger coordinates are parsed, edge zones trigger volume and brightness. A formal `Sway.Probe live` run (full X span 0 → 123 mm, null-hDevice count) is still UNKNOWN. | Hands-on test of the app build |
+| E2 | UNKNOWN: run `Sway.Probe live` with Notepad, a browser and full-screen video focused. | — |
+| E3 | UNKNOWN: run `Sway.Probe freeze`. CursorFreezer is already built (small, off when the setting is off) and will be removed if E3 fails (D-09). | — |
+| E4 | UNKNOWN: elevated Task Manager focused. | — |
+| E5 (hybrid GPU mode) | **Pass.** 100 × `WmiSetBrightness`: median 5.5 ms, p95 8.7 ms, max 54 ms, 0 failures. The throttle is set to 16 ms. Read-back events (`WmiMonitorBrightnessEvent`) arrive late and echo Sway's own writes; Sway ignores read-backs for 1 s after it writes (otherwise the level snapped back after release, a bug found in hands-on testing). | `Sway.Probe brightness` |
+| E5 (discrete GPU / MUX) | UNKNOWN: switch the MUX to dGPU-only, reboot, run `Sway.Probe brightness`. | — |
+| E6 | UNKNOWN: `Sway.Probe live` prints the scan interval on exit. | — |
+| Volume (P4.1) | **Pass.** `Apply(+0.1)` moved the Windows volume 74 → 84 and back; 0.2 ms per call. | `Sway.Probe volume` |
