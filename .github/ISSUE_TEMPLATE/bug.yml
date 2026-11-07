@@ -1,0 +1,29 @@
+name: Bug
+description: Something in Sway doesn't work as described
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, what happened instead.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Sway version
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: Probe report
+      description: Output of `Sway.Probe report` (no personal data; review it first).
+      render: markdown
+  - type: textarea
+    id: log
+    attributes:
+      label: Log
+      description: Relevant lines from `%LOCALAPPDATA%\Sway\log.txt`, if any.
+      render: text

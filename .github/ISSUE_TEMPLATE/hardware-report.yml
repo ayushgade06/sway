@@ -1,0 +1,36 @@
+name: Hardware report
+description: Tell us whether Sway works on your touchpad
+labels: [hardware]
+title: "Hardware: <laptop model>"
+body:
+  - type: input
+    id: laptop
+    attributes:
+      label: Laptop model
+      placeholder: Acer Nitro ANV15-51
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: Probe report
+      description: Paste the output of `Sway.Probe report`. It contains no username, serials or device paths; review it before posting.
+      render: markdown
+    validations:
+      required: true
+  - type: dropdown
+    id: works
+    attributes:
+      label: Does Sway work?
+      options:
+        - Not tried the app yet (Probe only)
+        - Works
+        - Partly (describe below)
+        - Doesn't work
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Anything odd? Attach a `Sway.Probe record` file if a gesture misbehaves.
