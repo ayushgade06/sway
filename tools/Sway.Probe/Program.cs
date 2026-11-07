@@ -16,6 +16,8 @@ static class Program
           record <file> [desc] Record touch frames to JSON until Enter (for tests/data)
           freeze               E3: hold Ctrl to block touchpad cursor moves via a low-level mouse hook
           gestures             Live edge-gesture recognizer output (P3.7)
+          volume               Check volume control: +10 and back (P4.1)
+          brightness           Time 100 WMI brightness writes and restore (E5)
         """;
 
     static int Main(string[] args)
@@ -30,6 +32,8 @@ static class Program
                 "record" when args.Length > 1 => Live.Record(args[1], args.Length > 2 ? string.Join(" ", args[2..]) : Path.GetFileNameWithoutExtension(args[1])),
                 "freeze" => Live.Freeze(),
                 "gestures" => GesturesView.Run(),
+                "volume" => ControlsCheck.Volume(),
+                "brightness" => ControlsCheck.Brightness(),
                 _ => Help(),
             };
         }
